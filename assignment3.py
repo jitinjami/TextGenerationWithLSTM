@@ -1,10 +1,7 @@
 import os
 import torch
 from torch import nn
-import argparse
 import numpy as np
-from torch import nn, optim
-from torch.utils.data import DataLoader
 import torch.nn.functional as F
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -209,7 +206,7 @@ def predict(model, vocab, text, size, sampling = False):
     final_string = ''.join(characters)
     return final_string
 
-def train(model, my_data, epochs = 100, batch_size = 32, seq_length = 64, lr = 0.001, clip = 1.0):
+def train(model, my_data, epochs = 100, batch_size = 32, seq_length = 64, lr = 0.001, clip = 1.0, device="cpu"):
     model.train()
     
     opt = torch.optim.Adam(model.parameters(), lr=lr)
@@ -270,7 +267,7 @@ embedding_length = bptt_len
 model = LSTMModel(vocab_length, embedding_length, n_hidden, n_layers)
 print(model, file=open("original.txt", "a"))
 
-train(model, my_data=my_data, epochs = epochs, batch_size = batch_size, seq_length=bptt_len, lr = 0.001, clip = 1.0)
+train(model, my_data=my_data, epochs = epochs, batch_size = batch_size, seq_length=bptt_len, lr = 0.001, clip = 1.0, device=device)
 torch.save(model.state_dict(), "./original.pth")
 
 model.load_state_dict(torch.load('./original.pth'))
