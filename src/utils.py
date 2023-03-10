@@ -19,18 +19,22 @@ def get_batches(batches: ChunkedTextData):
         y = torch.transpose(batches[i][1:], 0, 1) #Shape will be batch_size x sequential length: 32 x 64
         yield x,y
 
-def predict(model, vocab, text, size, sampling = False):
+def predict(model, vocab, text, size, sampling = False, device="cpu"):
     #Convert text to tensor using vocabulary
+    model = model.to(device)
+    
     model.eval()
     characters = [character for character in text]
     h = model.init_hidden(len(characters))
 
     for i in range(size):
         x = torch.tensor([[vocab.get_idx(characters[j]) for j in range(i,len(characters))]]).transpose(-1,0)
+        x = x.to(device)
+        #h = h.to(device)
         y_pred, h = model(x, h)
 
         last_letter_logits = y_pred[-1]
-        p = F.softmax(last_letter_logits, dim=0).detach().numpy()
+        p = F.softmax(last_letter_logits, dim=0).detach().cpu().numpy()
 
         last_letter_index = np.argmax(p)
         if sampling:
@@ -50,7 +54,7 @@ def train(model, my_data, epochs = 100, batch_size = 32, seq_length = 64, lr = 0
 
     train_batches = ChunkedTextData(data, batch_size, seq_length, pad_id=0)[:-1]
 
-    model.to(device)
+    model = model.to(device)
 
 
     for e in range(epochs):
@@ -74,7 +78,7 @@ def train(model, my_data, epochs = 100, batch_size = 32, seq_length = 64, lr = 0
             opt.step()
         model.eval()
         
-        print(predict(model, vocab, "Dogs like best to", 5), file=open("original.txt", "a"))
+        print(predict(model, vocab, "Dogs like best to", 5, device = device), file=open("original.txt", "a"))
 
         model.train()
 

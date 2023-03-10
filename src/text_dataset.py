@@ -1,5 +1,6 @@
 import torch
-from vocabulary import Vocabulary
+import os
+from src.vocabulary import Vocabulary
 
 class LongTextData:
 
