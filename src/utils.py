@@ -76,12 +76,9 @@ def train(model, my_data, epochs = 100, batch_size = 32, seq_length = 64, lr = 0
 
             nn.utils.clip_grad_norm_(model.parameters(), clip)
             opt.step()
-        model.eval()
-        
-        print(predict(model, vocab, "Dogs like best to", 5, device = device), file=open("original.txt", "a"))
 
         model.train()
 
         print("Epoch: {}/{}...\n".format(e, epochs),
                 "Training Loss: {:.4f}...\n".format(loss.item()),
-                "Perplex Loss: {:.4f}...\n".format(perplex_loss), file=open("original.txt", "a"))
+                "Perplex Loss: {:.4f}...\n".format(perplex_loss))

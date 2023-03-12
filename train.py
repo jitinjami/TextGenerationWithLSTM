@@ -17,7 +17,7 @@ def main():
     model = LSTMModel(vocab_length, embedding_length=cfg.BPTT_LEN, n_hidden=cfg.N_HIDDEN, n_layers=cfg.N_LAYERS)
 
     train(model, my_data=my_data, epochs = cfg.NUM_EPOCHS, batch_size = cfg.BATCH_SIZE, seq_length=cfg.BPTT_LEN, lr = cfg.LR, clip = 1.0, device=device)
-    torch.save(model.state_dict(), cwd + "/original.pth")
+    torch.save(model.state_dict(), cwd + f"/results/model_{cfg.LR}_{cfg.BPTT_LEN}.pth")
 
 if __name__ == '__main__':
     main()
